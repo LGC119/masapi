@@ -83,9 +83,9 @@ class Card
      * @param string $appId
      * @param string $masAccessToken
      */
-    public function __construct($appId, $masAccessToken)
+    public function __construct($appId, $clientId, $uuid)
     {
-        $this->http  = new Http(new AccessToken($appId, $masAccessToken));
+        $this->http  = new Http(new AccessToken($appId, $clientId, $uuid));
         $this->cache = new Cache($appId);
     }
 

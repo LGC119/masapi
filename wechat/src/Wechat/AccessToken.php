@@ -58,6 +58,7 @@ class AccessToken
 
     // API
     const API_TOKEN_GET = 'https://prism-dev.masengine.com/app/index.php/Api/getWxAccessToken';
+    const MAS_TOKEN_GET = 'https://prism-dev.masengine.com/app/index.php/oauth/AuthCode_Controller/authorize';
 
     /**
      * constructor
@@ -65,10 +66,11 @@ class AccessToken
      * @param string $appId
      * @param string $masAccessToken
      */
-    public function __construct($appId, $masAccessToken)
+    public function __construct($appId, $clientId, $uuid)
     {
         $this->appId     = $appId;
-        $this->masAccessToken = $masAccessToken;
+        $this->clientId = $clientId;
+        $this->uuid = $uuid;
         $this->cache     = new Cache($appId);
     }
 
@@ -95,20 +97,30 @@ class AccessToken
 
         // for php 5.3
         $appId       = $this->appId;
-        $masAccessToken   = $this->masAccessToken;
+        $clientId   = $this->clientId;
+        $uuid   = $this->uuid;
         $cache       = $this->cache;
         $cacheKey    = $this->cacheKey;
         $apiTokenGet = self::API_TOKEN_GET;
+        $masTokenGet = self::MAS_TOKEN_GET;
 
         return $this->token = $this->cache->get(
             $cacheKey,
-            function ($cacheKey) use ($appId, $masAccessToken, $cache, $apiTokenGet) {
-                $params = array(
-                           'appid'      => $appId,
-                           'access_token'     => $masAccessToken,
-                           // 'grant_type' => 'client_credential',
-                          );
+            function ($cacheKey) use ($appId, $clientId, $uuid, $cache, $apiTokenGet, $masTokenGet) {
+                //获取平台token
+                $masParams = array(
+                    'client_id' => $clientId,
+                    'uuid'      => $uuid,
+                );
                 $http = new Http();
+
+                $masToken = $http->get($masTokenGet, $masParams);
+
+                //用平台token换取微信token
+                $params = array(
+                           'appid'          => $appId,
+                           'access_token'   => $masToken['access_token'],
+                          );
 
                 $token = $http->get($apiTokenGet, $params);
 

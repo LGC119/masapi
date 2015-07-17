@@ -195,7 +195,7 @@ class Http
         }
 
         $response = $this->doCurl();
-
+        
         // Separate headers and body
         $headerSize = $response['curl_info']['header_size'];
         $header     = substr($response['response'], 0, $headerSize);

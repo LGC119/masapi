@@ -35,7 +35,7 @@ class QRCode
      *
      * @var string
      */
-    protected $masAccessToken;
+    protected $clientId;
 
     const DAY = 86400;
     const SCENE_QE_CARD        = 'QR_CARD';             // 卡券
@@ -52,10 +52,11 @@ class QRCode
      * @param string $appId
      * @param string $masAccessToken
      */
-    public function __construct($appId, $masAccessToken)
+    public function __construct($appId, $clientId, $uuid)
     {
         $this->appId     = $appId;
-        $this->masAccessToken = $masAccessToken;
+        $this->clientId = $clientId;
+        $this->uuid = $uuid;
     }
 
     /**
@@ -156,7 +157,7 @@ class QRCode
     {
         $expireSeconds !== null || $expireSeconds = 7 * self::DAY;
 
-        $http = new Http(new AccessToken($this->appId, $this->masAccessToken));
+        $http = new Http(new AccessToken($this->appId, $this->clientId , $this->uuid));
 
         $params = array(
                     'action_name' => $actionName,

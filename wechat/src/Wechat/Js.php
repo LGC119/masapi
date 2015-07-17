@@ -59,7 +59,7 @@ class Js
      * @param string $appId
      * @param string $masAccessToken
      */
-    public function __construct($appId, $masAccessToken)
+    public function __construct($appId, $clientId, $uuid)
     {
         $this->appId     = $appId;
         $this->masAccessToken = $masAccessToken;
@@ -123,8 +123,8 @@ class Js
 
         return $this->cache->get(
             $key,
-            function ($key) use ($appId, $masAccessToken, $cache, $apiTicket) {
-                $http  = new Http(new AccessToken($appId, $masAccessToken));
+            function ($key) use ($appId, $clientId, $uuid, $cache, $apiTicket) {
+                $http  = new Http(new AccessToken($appId, $clientId, $uuid));
 
                 $result = $http->get($apiTicket);
 
