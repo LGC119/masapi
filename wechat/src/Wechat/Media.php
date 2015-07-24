@@ -118,7 +118,7 @@ class Media
 
         $this->forever = false;
 
-        return $response['media_id'];
+        return $response;
     }
 
     /**
@@ -159,7 +159,7 @@ class Media
 
         $response = $this->http->jsonPost(self::API_FOREVER_NEWS_UPLOAD, $params);
 
-        return $response['media_id'];
+        return $response;
     }
 
     /**
