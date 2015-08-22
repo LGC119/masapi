@@ -16,7 +16,9 @@
 namespace MasApi\Wechat;
 
 use MasApi\Wechat\Utils\JSON;
+use MasApi\Wechat\Utils\Arr;
 use MasApi\Wechat\Utils\Bag;
+use MasApi\Wechat\Utils\File;
 
 /**
  * 媒体素材
@@ -117,8 +119,14 @@ class Media
         $response = $this->http->post($url, $params, $options);
 
         $this->forever = false;
+        
+        if ($type == 'image') {
+            return $response;
+        }
 
-        return $response;
+        $response = Arr::only($response, array('media_id', 'thumb_media_id'));
+
+        return array_pop($response);
     }
 
     /**
@@ -266,7 +274,18 @@ class Media
 
         $contents = $this->http->{$method}($api, $params);
 
-        return $filename ? file_put_contents($filename, $contents) : $contents;
+        $filename = $filename ? $filename : $mediaId;
+
+        if (!is_array($contents)) {
+            $ext = File::getStreamExt($contents);
+
+            file_put_contents($filename.'.'.$ext, $contents);
+
+            return $filename.'.'.$ext;
+        } else {
+
+            return $contents;
+        }
     }
 
     /**

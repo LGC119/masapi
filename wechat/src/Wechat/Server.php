@@ -172,7 +172,7 @@ class Server
         }
 
         if ($this->input->has('echostr')) {
-            return $this->input['echostr'];
+            return strip_tags($this->input['echostr']);
         }
 
         return $this->response($this->handleRequest());
@@ -189,8 +189,16 @@ class Server
             return;
         }
 
-        if (!empty($GLOBALS['HTTP_RAW_POST_DATA'])) {
-            $xmlInput = $GLOBALS['HTTP_RAW_POST_DATA'];
+        if (version_compare(PHP_VERSION, '5.6.0', '<')) {
+            if (!empty($GLOBALS['HTTP_RAW_POST_DATA'])) {
+                $xmlInput = $GLOBALS['HTTP_RAW_POST_DATA'];
+            } else {
+                $xmlInput = file_get_contents('php://input');
+            }
+
+            if (empty($_REQUEST['echostr']) && empty($xmlInput) && !empty($_REQUEST['signature'])) {
+                throw new Exception("没有读取到消息 XML，请在 php.ini 中打开 always_populate_raw_post_data=On", 500);
+            }
         } else {
             $xmlInput = file_get_contents('php://input');
         }
