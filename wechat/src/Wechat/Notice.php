@@ -177,7 +177,7 @@ class Notice
     {
         $params = array('template_id_short' => $shortId);
 
-        $result = $this->http->jsonPost(self::API_SET_INDUSTRY, $params);
+        $result = $this->http->jsonPost(self::API_ADD_TEMPLATE, $params);
 
         return $result['template_id'];
     }
@@ -285,7 +285,7 @@ class Notice
                     $value = array_shift($item);
                     $color = $this->defaultColor;
                 } else {
-                    list($value, $color) = each($item);
+                    list($value, $color) = $item;
                 }
             } else {
                 $value = '数据项格式错误';
